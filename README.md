@@ -1,64 +1,44 @@
-# gulp-eval
+# node-eval
 
-Require CommonJS modules, JSON files or files with JS-expression inside gulp tasks with ease.
+Eval JS-expression or require CommonJS modules and JSON files with ease.
 
-[![NPM version](http://img.shields.io/npm/v/gulp-eval.svg?style=flat)](http://www.npmjs.org/package/gulp-eval)
-[![Build Status](http://img.shields.io/travis/gulp-bem/gulp-eval/master.svg?style=flat&label=tests)](https://travis-ci.org/gulp-bem/gulp-eval)
-[![Coverage Status](https://img.shields.io/coveralls/gulp-bem/gulp-eval.svg?branch=master&style=flat)](https://coveralls.io/r/gulp-bem/gulp-eval)
-[![Dependency Status](http://img.shields.io/david/gulp-bem/gulp-eval.svg?style=flat)](https://david-dm.org/gulp-bem/gulp-eval)
+[![NPM version](http://img.shields.io/npm/v/node-eval.svg?style=flat)](http://www.npmjs.org/package/node-eval)
+[![Build Status](http://img.shields.io/travis/gulp-bem/node-eval/master.svg?style=flat&label=tests)](https://travis-ci.org/gulp-bem/node-eval)
+[![Coverage Status](https://img.shields.io/coveralls/gulp-bem/node-eval.svg?branch=master&style=flat)](https://coveralls.io/r/gulp-bem/node-eval)
+[![Dependency Status](http://img.shields.io/david/gulp-bem/node-eval.svg?style=flat)](https://david-dm.org/gulp-bem/node-eval)
 
-`gulp-eval` fills `data` property of [Vinyl](https://github.com/gulpjs/vinyl) objects.
 
 ## Usage example:
-```js
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var gulpEval = require('gulp-eval');
-var through = require('through2');
 
-gulp.task('default', () =>
-  gulp.src('node_modules/*/package.json')
-    .pipe(gulpEval())
-    .pipe(through.obj(function(file, enc, next) {
-      var data = file.data; // Here we have evaluated package.json
-      file.contents = new Buffer(data.name + '#' + data.version);
-      next(null, file);
-    }))
-    .pipe(concat('packages.txt'))
-    .pipe(gulp.dest('dest/'))
-);
+### Simple
+
+```js
+var nodeEval = require('node-eval');
+
+console.log(nodeEval('42 * 42')); // 1764
 ```
 
-## Eval
-You can use eval function without gulp
-
+### CommonJS
 ```js
-var safeEval = require('gulp-eval').eval;
+var safeEval = require('node-eval');
 
 var requireContent =
 `
     var p = require('../package.json');
     module.exports = {
-        elem: p.name
+        name: p.name
     };
 `;
 
-var block = safeEval(requireContent);
-console.log(block.elem);
+var package = safeEval(requireContent);
+console.log(package.name); // 'node-eval'
 ```
 
 ## Context
-You can provide some like-a-global variables into gulp-eval
+You can provide some like-a-global variables into node-eval
 
 ```js
-var gulpEval = require('gulp-eval');
-var globalVar = 42;
-var transformStream = gulpEval({globalVar: globalVar});
-```
-
-Using global with eval:
-```js
-var safeEval = require('gulp-eval').eval;
+var safeEval = require('node-eval');
 
 var secretKey = '^___^';
 var content = 'module.exports = secretKey;';
