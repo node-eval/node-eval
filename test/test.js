@@ -49,3 +49,10 @@ it('should throw on bad json', function() {
 
     expect(() => nodeEval(content, path)).to.throw(Error);
 });
+
+it('should throw on bad js', function() {
+    var path = 'file.js',
+        content = 'throw new Error("Hello")';
+
+    expect(() => nodeEval(content, path)).to.throw("Hello");
+});
