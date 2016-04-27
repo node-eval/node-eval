@@ -91,6 +91,7 @@ function tryCatch(fn, cb) {
  * because the buffer-to-string conversion in `fs.readFileSync()`
  * translates it to FEFF, the UTF-16 BOM.
  */
+/* istanbul ignore next: don't care */
 function stripBOM(content) {
     if(content.charCodeAt(0) === 0xFEFF) {
         content = content.slice(1);
