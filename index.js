@@ -50,7 +50,7 @@ module.exports = function(content, filename, context) {
         result = sandbox.module.exports;
     }
     return result;
-}
+};
 
 /**
  * Wrap code with function expression

@@ -1,13 +1,11 @@
 var chai = require('chai');
 var expect = chai.expect;
-chai.should();// WTF chaiAsPromised !??
-
 
 var nodeEval = require('../');
 
 function coco(content, context) {
     var path;
-    if (typeof content === 'string') {
+    if(typeof content === 'string') {
         path = 'file.js';
     } else {
         path = 'file.json';
