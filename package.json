@@ -1,0 +1,25 @@
+{
+  "name": "node-eval",
+  "version": "1.0.0",
+  "description": "require or eval modules",
+  "keywords": [
+    "eval",
+    "require"
+  ],
+  "author": "Vasiliy Loginevskiy <yeti.or@gmail.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint && npm run specs",
+    "specs": "mocha test",
+    "lint": "jshint . && jscs .",
+    "cover": "istanbul cover _mocha -- test"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.2",
+    "jscs": "^2.11.0",
+    "jshint": "^2.9.1",
+    "mocha": "^2.4.5"
+  }
+}
