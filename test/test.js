@@ -54,5 +54,5 @@ it('should throw on bad js', function() {
     var path = 'file.js',
         content = 'throw new Error("Hello")';
 
-    expect(() => nodeEval(content, path)).to.throw("Hello");
+    expect(() => nodeEval(content, path)).to.throw('Hello');
 });
