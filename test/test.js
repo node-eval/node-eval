@@ -14,7 +14,9 @@ function coco(content, context) {
     return expect(nodeEval(content, path, context)).to;
 }
 
-it('should eval simple expression', () => coco('({42:42})').eql({42: 42}));
+it('should eval simple expression', () => coco('42 / 42').eql(1));
+
+it('should eval expression', () => coco('({42:42})').eql({42: 42}));
 
 it('should not eval simple object', () => coco('{}').not.to.exist);
 
@@ -45,5 +47,5 @@ it('should throw on bad json', function() {
     var path = 'file.json',
         content = '{"block":"page",}';
 
-    expect(nodeEval(content, path)).to.throw(Error);
+    expect(() => nodeEval(content, path)).to.throw(Error);
 });
