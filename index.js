@@ -12,8 +12,8 @@ var Module = require('module');
  * @returns {*}
  */
 module.exports = function(content, filename, context) {
-    var dirname = path.dirname(filename);
-    var ext = path.extname(filename);
+    var dirname = filename && path.dirname(filename);
+    var ext = filename && path.extname(filename);
 
     content = stripBOM(content);
 
