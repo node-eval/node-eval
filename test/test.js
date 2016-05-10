@@ -43,6 +43,8 @@ it('should provide global objects', () => coco('module.exports = typeof chai ===
 
 it('should eval json', () => coco({42: 42}).eql({42: 42}));
 
+it('should work without filename argument', () => expect(nodeEval('42')).to.eql(42));
+
 it('should throw on bad json', function() {
     var path = 'file.json',
         content = '{"block":"page",}';
