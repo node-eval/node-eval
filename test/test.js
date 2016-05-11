@@ -39,7 +39,7 @@ it('should eval module with require', () => {
     coco(requireContent).eql({block: 'node-eval'});
 });
 
-it('should provide global objects', () => coco('module.exports = typeof chai === "object"', {chai}).to.be.true);
+it('should provide global objects', () => coco('module.exports = typeof it + typeof chai', {it, chai}).to.eql('functionobject'));
 
 it('should eval json', () => coco({42: 42}).eql({42: 42}));
 
