@@ -67,9 +67,7 @@ function wrap(body, extKeys) {
         '\n});'
     ];
 
-    extKeys = extKeys ? extKeys.map(function(key) {
-        return ', ' + key;
-    }) : '';
+    extKeys = extKeys ? ', ' + extKeys : '';
 
     return wrapper[0] + extKeys + wrapper[1] + body + wrapper[2];
 }
