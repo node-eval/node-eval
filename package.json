@@ -1,6 +1,6 @@
 {
   "name": "node-eval",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "require or eval modules",
   "keywords": [
     "eval",
