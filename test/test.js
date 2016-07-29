@@ -67,3 +67,8 @@ it('should not throw on touching `module` in expression statements', function() 
     expect(() => nodeEval('module.zxqfox = {42:42}')).not.to.throw(Error);
 });
 
+it('should not polute global.module obj', function() {
+    global.module = {42: 42};
+    nodeEval('module.zxqfox = {42:42}');
+    expect(global.module).to.eql({42: 42});
+});
