@@ -62,3 +62,8 @@ it('should throw on bad js', function() {
 
     expect(() => nodeEval(content, path)).to.throw('Hello');
 });
+
+it('should not throw on touching `module` in expression statements', function() {
+    expect(() => nodeEval('module.zxqfox = {42:42}')).not.to.throw(Error);
+});
+

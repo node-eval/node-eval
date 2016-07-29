@@ -45,7 +45,19 @@ module.exports = function(content, filename, context) {
 
     var result;
     if(sandbox.module.exports['__42__'] && Object.keys(sandbox.module.exports).length === 1) {
+        var needToClean;
+        if(global.module) {
+            needToClean = global.module;
+            global.module = {};
+        } else {
+            global.module = {};
+        }
         result = context ? vm.runInNewContext(content, context) : vm.runInThisContext(content);
+        if(needToClean) {
+            global.module = needToClean;
+        } else {
+            global.module = undefined;
+        }
     } else {
         delete sandbox.module.exports['__42__'];
         result = sandbox.module.exports;
