@@ -72,3 +72,7 @@ it('should not polute global.module obj', function() {
     nodeEval('module.zxqfox = {42:42}');
     expect(global.module).to.eql({42: 42});
 });
+
+it('should return empty object if you touch `module` object but didn\'t export anything', function() {
+    expect(nodeEval('module.zxqfox = {42:42}')).to.eql({});
+});
