@@ -28,7 +28,7 @@ module.exports = function(content, filename, context) {
     var contextKeys;
 
     sandbox.module = new Module(filename, module.parent);
-    sandbox.exports = sandbox.module.exports = {'__42__': '__42__'};
+    sandbox.exports = sandbox.module.exports = {};
     sandbox.require = sandbox.module.require;
 
     var args = [sandbox.exports, sandbox.require, sandbox.module, filename, dirname];
@@ -41,13 +41,17 @@ module.exports = function(content, filename, context) {
     var options = {filename: filename, lineOffset: 0, displayErrors: true};
     var compiledWrapper = vm.runInThisContext(wrapper, options);
 
+    var moduleKeysCount = Object.keys(sandbox.module).length;
+    var exportKeysCount = Object.keys(sandbox.module.exports).length;
     compiledWrapper.apply(sandbox.exports, args);
 
     var result;
-    if(sandbox.module.exports['__42__'] && Object.keys(sandbox.module.exports).length === 1) {
+    if(
+        Object.keys(sandbox.module.exports).length === exportKeysCount &&
+        Object.keys(sandbox.module).length === moduleKeysCount
+    ) {
         result = context ? vm.runInNewContext(content, context) : vm.runInThisContext(content);
     } else {
-        delete sandbox.module.exports['__42__'];
         result = sandbox.module.exports;
     }
     return result;

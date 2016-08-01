@@ -62,3 +62,17 @@ it('should throw on bad js', function() {
 
     expect(() => nodeEval(content, path)).to.throw('Hello');
 });
+
+it('should not throw on touching `module` in expression statements', function() {
+    expect(() => nodeEval('module.zxqfox = {42:42}')).not.to.throw(Error);
+});
+
+it('should not polute global.module obj', function() {
+    global.module = {42: 42};
+    nodeEval('module.zxqfox = {42:42}');
+    expect(global.module).to.eql({42: 42});
+});
+
+it('should return empty object if you touch `module` object but didn\'t export anything', function() {
+    expect(nodeEval('module.zxqfox = {42:42}')).to.eql({});
+});
