@@ -1,4 +1,3 @@
-
 var vm = require('vm');
 var path = require('path');
 var Module = require('module');
@@ -12,8 +11,7 @@ var Module = require('module');
  * @returns {*}
  */
 module.exports = function(content, filename, context) {
-    var dirname = filename && path.dirname(filename);
-    var ext = filename && path.extname(filename);
+    var ext = path.extname(filename);
 
     content = stripBOM(content);
 
@@ -24,16 +22,26 @@ module.exports = function(content, filename, context) {
         });
     }
 
+    if(!filename || !path.isAbsolute(filename)) {
+        filename = path.resolve(path.dirname(_getCalleeFilename()), filename || '');
+        ext || (ext = path.extname(filename));
+    }
+
+    var dirname = path.dirname(filename);
     var sandbox = {};
     var exports = {};
     var contextKeys;
 
     sandbox.module = new Module(filename, module.parent);
+    sandbox.module.filename = filename;
     sandbox.module.exports = exports;
-    sandbox.require = sandbox.module.require;
+    sandbox.module.paths = Module._nodeModulePaths(path.dirname(filename));
+    // See: https://github.com/nodejs/node/blob/master/lib/internal/module.js#L13-L40
+    sandbox.require = id => sandbox.module.require(id);
+    sandbox.require.resolve = req => Module._resolveFilename(req, sandbox.module);
 
     var args = [sandbox.module.exports, sandbox.require, sandbox.module, filename, dirname];
-    context && (contextKeys = Object.keys(context).map(function(key) {
+    context && (contextKeys = Object.keys(context).map(key => {
         args.push(context[key]);
         return key;
     }));
@@ -103,3 +111,37 @@ function stripBOM(content) {
     }
     return content;
 }
+
+/**
+ * Get callee filename
+ * @param {Number} [calls] - number of additional inner calls
+ * @returns {String} - filename of a file that call
+ */
+function _getCalleeFilename(calls) {
+    calls = (calls|0) + 3; // 3 is a number of inner calls
+    var e = {};
+    Error.captureStackTrace(e);
+    return parseStackLine(e.stack.split(/\n/)[calls]).filename;
+}
+
+/**
+ * Partial implementation from https://github.com/stacktracejs/error-stack-parser/
+ *
+ * @param {String} line - v8 formatted stack line
+ * @returns {{filename: String, line: ?Number, column: ?Number}}
+ */
+function parseStackLine(line) {
+    var urlLike = line
+        // Sanitize string
+        .replace(/^\s+/, '').replace(/\(eval code/g, '(')
+        // Split with spaces: 'at someFn (/path/to.js:1:2)' or 'at /path/to.js:1:2'
+        .split(/\s+/)
+        // Take the last piece
+        .pop();
+    // Fetch parts: '(/path/to.js:1:2)' → [..., '/path/to.js', 1, 2]
+    var parts = /(.+?)(?:\:(\d+))?(?:\:(\d+))?$/.exec(urlLike.replace(/[\(\)]/g, ''));
+    var filename = ['eval', '<anonymous>'].indexOf(parts[1]) > -1 ? undefined : parts[1];
+
+    return {filename: filename, line: parts[2], column: parts[3]};
+}
+
