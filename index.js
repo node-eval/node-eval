@@ -25,13 +25,14 @@ module.exports = function(content, filename, context) {
     }
 
     var sandbox = {};
+    var exports = {};
     var contextKeys;
 
     sandbox.module = new Module(filename, module.parent);
-    sandbox.exports = sandbox.module.exports = {};
+    sandbox.module.exports = exports;
     sandbox.require = sandbox.module.require;
 
-    var args = [sandbox.exports, sandbox.require, sandbox.module, filename, dirname];
+    var args = [sandbox.module.exports, sandbox.require, sandbox.module, filename, dirname];
     context && (contextKeys = Object.keys(context).map(function(key) {
         args.push(context[key]);
         return key;
@@ -43,10 +44,11 @@ module.exports = function(content, filename, context) {
 
     var moduleKeysCount = Object.keys(sandbox.module).length;
     var exportKeysCount = Object.keys(sandbox.module.exports).length;
-    compiledWrapper.apply(sandbox.exports, args);
+    compiledWrapper.apply(sandbox.module.exports, args);
 
     var result;
     if(
+        sandbox.module.exports === exports &&
         Object.keys(sandbox.module.exports).length === exportKeysCount &&
         Object.keys(sandbox.module).length === moduleKeysCount
     ) {

@@ -10,7 +10,8 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && npm run specs",
+    "pretest": "npm run lint",
+    "test": "npm run specs",
     "specs": "mocha test",
     "lint": "jshint . && jscs .",
     "cover": "istanbul cover _mocha -- test"
@@ -20,6 +21,6 @@
     "istanbul": "^0.4.2",
     "jscs": "^2.11.0",
     "jshint": "^2.9.1",
-    "mocha": "^2.4.5"
+    "mocha": "^3.0.0"
   }
 }
