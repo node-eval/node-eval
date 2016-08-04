@@ -8,6 +8,10 @@
   ],
   "author": "Vasiliy Loginevskiy <yeti.or@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gulp-bem/node-eval"
+  },
   "main": "index.js",
   "scripts": {
     "pretest": "npm run lint",
