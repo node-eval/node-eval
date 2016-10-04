@@ -1,5 +1,4 @@
 {
-    "bitwise": true,
     "eqeqeq": true,
     "forin": true,
     "freeze": true,
