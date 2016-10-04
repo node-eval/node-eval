@@ -50,6 +50,20 @@ describe('commonJS modules', () => {
         `;
         coco(requireContent).eql({block: 'node-eval'});
     });
+
+    it('should require relatively passed modules', function() {
+        var path = './fixtures/file.js',
+            content = 'module.exports = require("./d1");';
+
+        expect(nodeEval(content, path)).to.eql('xxx42xxx');
+    });
+
+    it('should resolve paths of modules', function() {
+        var path = './fixtures/d2/file.js',
+            content = 'module.exports = require.resolve("../d1");';
+
+        expect(nodeEval(content, path)).to.match(/\/fixtures\/d1\/index\.js$/);
+    });
 });
 
 describe('JSON', () => {
