@@ -78,7 +78,7 @@ describe('JSON', () => {
         var path = 'file.json',
             content = '{"block":"page",}';
 
-        expect(() => nodeEval(content, path)).to.throw(Error);
+        expect(() => nodeEval(content, path)).to.throw(/Unexpected token }/);
     });
 });
 
@@ -101,10 +101,17 @@ describe('common', () => {
 });
 
 describe('errors', () => {
-    xit('should throw on bad js', function() {
+    it('should throw on throwing bad js', function() {
         var path = 'file.js',
             content = 'throw new Error("Hello")';
 
         expect(() => nodeEval(content, path)).to.throw('Hello');
+    });
+
+    it('should throw on syntactically bad js', function() {
+        var path = 'file.js',
+            content = 'yoba ! rot';
+
+        expect(() => nodeEval(content, path)).to.throw(/Unexpected token !/);
     });
 });
