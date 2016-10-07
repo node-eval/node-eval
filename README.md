@@ -34,6 +34,18 @@ var package = safeEval(requireContent);
 console.log(package.name); // 'node-eval'
 ```
 
+--
+**NB** Internally `node-eval` will resolve passed relative paths using the place
+it's called (like `require` do).
+It may spend additional processor's time on it, so better to pass in absolute path.
+
+```js
+// /repos/open-source-project/lib/file.js:
+const evaluatingFile = '../files/another.js';
+nodeEval(fs.readFileSync(evaluatingFile, 'utf-8'), evaluatingFile);
+// '../files/another.js' will be resolved to '/repos/open-source-project/files/another.js'
+```
+
 ## Context
 You can provide some like-a-global variables into node-eval
 
