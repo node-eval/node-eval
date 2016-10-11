@@ -16,15 +16,14 @@
   "scripts": {
     "pretest": "npm run lint",
     "test": "npm run specs",
-    "specs": "mocha test",
-    "lint": "jshint . && jscs .",
-    "cover": "istanbul cover _mocha -- test"
+    "specs": "nyc mocha",
+    "lint": "jshint . && jscs ."
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "istanbul": "^0.4.2",
     "jscs": "^2.11.0",
     "jshint": "^2.9.1",
-    "mocha": "^3.0.0"
+    "mocha": "^3.0.0",
+    "nyc": "^8.3.1"
   }
 }
