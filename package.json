@@ -10,7 +10,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gulp-bem/node-eval"
+    "url": "https://github.com/nodules/node-eval"
   },
   "main": "index.js",
   "scripts": {

@@ -3,9 +3,9 @@
 Eval JS-expression or require CommonJS modules and JSON files with ease.
 
 [![NPM version](http://img.shields.io/npm/v/node-eval.svg?style=flat)](http://www.npmjs.org/package/node-eval)
-[![Build Status](http://img.shields.io/travis/gulp-bem/node-eval/master.svg?style=flat&label=tests)](https://travis-ci.org/gulp-bem/node-eval)
-[![Coverage Status](https://img.shields.io/coveralls/gulp-bem/node-eval.svg?branch=master&style=flat)](https://coveralls.io/r/gulp-bem/node-eval)
-[![Dependency Status](http://img.shields.io/david/gulp-bem/node-eval.svg?style=flat)](https://david-dm.org/gulp-bem/node-eval)
+[![Build Status](http://img.shields.io/travis/nodules/node-eval/master.svg?style=flat&label=tests)](https://travis-ci.org/nodules/node-eval)
+[![Coverage Status](https://img.shields.io/coveralls/nodules/node-eval.svg?branch=master&style=flat)](https://coveralls.io/r/nodules/node-eval)
+[![Dependency Status](http://img.shields.io/david/nodules/node-eval.svg?style=flat)](https://david-dm.org/nodules/node-eval)
 
 
 ## Usage example:
