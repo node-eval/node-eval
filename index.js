@@ -27,7 +27,10 @@ module.exports = function(content, filename, context) {
     }
 
     var sandbox;
-    sandbox = _commonjsEval(content, filename, context);
+    // Skip commonjs evaluation if there are no `exports` or `module` occurrencies
+    if(/\b(exports|module)\b/.test(content)) {
+        sandbox = _commonjsEval(content, filename, context);
+    }
 
     var result;
     if(sandbox && !sandbox.__result) {
