@@ -4,7 +4,7 @@ var expect = chai.expect;
 var nodeEval = require('../');
 
 function coco(content, context) {
-    return expect(nodeEval(content, 'file.js', context)).to;
+    return expect(nodeEval(content, '/file.js', context)).to;
 }
 
 describe('expression', () => {
@@ -48,7 +48,7 @@ describe('commonJS modules', () => {
                 block: p.name,
             };
         `;
-        coco(requireContent).eql({block: 'node-eval'});
+        expect(nodeEval(requireContent, 'file.js')).to.eql({block: 'node-eval'});
     });
 
     it('should require relatively passed modules', function() {
