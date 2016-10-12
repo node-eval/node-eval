@@ -11,7 +11,7 @@ var Module = require('module');
  * @returns {*}
  */
 module.exports = function(content, filename, context) {
-    var ext = path.extname(filename || '');
+    var ext = filename && path.extname(filename);
 
     content = stripBOM(content);
 
@@ -22,23 +22,41 @@ module.exports = function(content, filename, context) {
         });
     }
 
-    if(!filename || !path.isAbsolute(filename)) {
-        filename = path.resolve(path.dirname(_getCalleeFilename()), filename || '');
-        ext || (ext = path.extname(filename));
+    if(filename && !path.isAbsolute(filename)) {
+        filename = path.resolve(path.dirname(_getCalleeFilename()), filename);
     }
 
-    var dirname = path.dirname(filename);
+    var sandbox;
+    sandbox = _commonjsEval(content, filename, context);
+
+    var result;
+    if(sandbox && !sandbox.__result) {
+        result = sandbox.module.exports;
+    } else {
+        result = context ? vm.runInNewContext(content, context) : vm.runInThisContext(content);
+    }
+    return result;
+};
+
+function _commonjsEval(content, filename, context) {
+    var dirname = filename && path.dirname(filename);
     var sandbox = {};
     var exports = {};
     var contextKeys;
 
-    sandbox.module = new Module(filename, module.parent);
-    sandbox.module.filename = filename;
+    sandbox.module = new Module(filename || '<anonymous>', module.parent);
     sandbox.module.exports = exports;
-    sandbox.module.paths = Module._nodeModulePaths(path.dirname(filename));
-    // See: https://github.com/nodejs/node/blob/master/lib/internal/module.js#L13-L40
-    sandbox.require = id => sandbox.module.require(id);
-    sandbox.require.resolve = req => Module._resolveFilename(req, sandbox.module);
+
+    if(filename) {
+        sandbox.module.filename = filename;
+        sandbox.module.paths = Module._nodeModulePaths(dirname);
+        // See: https://github.com/nodejs/node/blob/master/lib/internal/module.js#L13-L40
+        sandbox.require = id => sandbox.module.require(id);
+        sandbox.require.resolve = req => Module._resolveFilename(req, sandbox.module);
+    } else {
+        filename = '<anonymous>';
+        sandbox.require = filenameRequired;
+    }
 
     var args = [sandbox.module.exports, sandbox.require, sandbox.module, filename, dirname];
     context && (contextKeys = Object.keys(context).map(key => {
@@ -54,19 +72,12 @@ module.exports = function(content, filename, context) {
     var exportKeysCount = Object.keys(sandbox.module.exports).length;
     compiledWrapper.apply(sandbox.module.exports, args);
 
-    var result;
-    if(
-        sandbox.module.exports === exports &&
+    sandbox.__result = sandbox.module.exports === exports &&
         Object.keys(sandbox.module.exports).length === exportKeysCount &&
-        Object.keys(sandbox.module).length === moduleKeysCount
-    ) {
-        result = context ? vm.runInNewContext(content, context) : vm.runInThisContext(content);
-    } else {
-        result = sandbox.module.exports;
-    }
-    return result;
-};
+        Object.keys(sandbox.module).length === moduleKeysCount;
 
+    return sandbox;
+}
 /**
  * Wrap code with function expression
  * Use nodejs style default wrapper
@@ -145,3 +156,7 @@ function parseStackLine(line) {
     return {filename: filename, line: parts[2], column: parts[3]};
 }
 
+function filenameRequired() {
+    throw new Error('Please pass in filename to use require');
+}
+filenameRequired.resolve = filenameRequired;

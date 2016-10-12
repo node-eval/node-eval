@@ -114,4 +114,14 @@ describe('errors', () => {
 
         expect(() => nodeEval(content, path)).to.throw(/Unexpected token !/);
     });
+
+    it('should throw error on require call without filename', function() {
+        expect(() => nodeEval('exports.path = require("path");'))
+            .to.throw(/pass in filename/);
+    });
+
+    it('should throw error on require call without filename', function() {
+        expect(() => nodeEval('exports.path = require.resolve("path");'))
+            .to.throw(/pass in filename/);
+    });
 });
