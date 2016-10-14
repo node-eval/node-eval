@@ -12,7 +12,13 @@ describe('expression', () => {
 
     it('should eval expression', () => coco('({42:42})').eql({42: 42}));
 
+    it('should eval arrayExpression', () => coco('[{42:42}]').eql([{42: 42}]));
+
     it('should not eval simple object', () => coco('{}').to.undefined);
+
+    it('should eval expression with \'exports\' key', () => coco('[{exports:42}]').eql([{exports: 42}]));
+
+    it('should eval expression with \'module\' key', () => coco('[{module:42}]').eql([{module: 42}]));
 });
 
 describe('commonJS modules', () => {
