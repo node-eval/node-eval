@@ -4,7 +4,7 @@ var expect = chai.expect;
 var nodeEval = require('../');
 
 function coco(content, context) {
-    return expect(nodeEval(content, 'file.js', context)).to;
+    return expect(nodeEval(content, '/file.js', context)).to;
 }
 
 describe('expression', () => {
@@ -12,7 +12,13 @@ describe('expression', () => {
 
     it('should eval expression', () => coco('({42:42})').eql({42: 42}));
 
+    it('should eval arrayExpression', () => coco('[{42:42}]').eql([{42: 42}]));
+
     it('should not eval simple object', () => coco('{}').to.undefined);
+
+    it('should eval expression with \'exports\' key', () => coco('[{exports:42}]').eql([{exports: 42}]));
+
+    it('should eval expression with \'module\' key', () => coco('[{module:42}]').eql([{module: 42}]));
 });
 
 describe('commonJS modules', () => {
@@ -48,7 +54,7 @@ describe('commonJS modules', () => {
                 block: p.name,
             };
         `;
-        coco(requireContent).eql({block: 'node-eval'});
+        expect(nodeEval(requireContent, 'file.js')).to.eql({block: 'node-eval'});
     });
 
     it('should require relatively passed modules', function() {
@@ -113,5 +119,15 @@ describe('errors', () => {
             content = 'yoba ! rot';
 
         expect(() => nodeEval(content, path)).to.throw(/Unexpected token !/);
+    });
+
+    it('should throw error on require call without filename', function() {
+        expect(() => nodeEval('exports.path = require("path");'))
+            .to.throw(/pass in filename/);
+    });
+
+    it('should throw error on require call without filename', function() {
+        expect(() => nodeEval('exports.path = require.resolve("path");'))
+            .to.throw(/pass in filename/);
     });
 });
