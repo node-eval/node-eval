@@ -13,6 +13,9 @@
     "url": "https://github.com/nodules/node-eval"
   },
   "main": "index.js",
+  "engines": {
+    "node": ">= 0.10"
+  },
   "scripts": {
     "pretest": "npm run lint",
     "test": "npm run specs",
