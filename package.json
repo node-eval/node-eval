@@ -19,6 +19,9 @@
     "specs": "nyc mocha",
     "lint": "jshint . && jscs ."
   },
+  "dependencies": {
+    "path-is-absolute": "1.0.1"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "jscs": "^2.11.0",
