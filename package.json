@@ -13,11 +13,17 @@
     "url": "https://github.com/nodules/node-eval"
   },
   "main": "index.js",
+  "engines": {
+    "node": ">= 0.10"
+  },
   "scripts": {
     "pretest": "npm run lint",
     "test": "npm run specs",
     "specs": "nyc mocha",
     "lint": "jshint . && jscs ."
+  },
+  "dependencies": {
+    "path-is-absolute": "1.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

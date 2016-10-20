@@ -2,6 +2,8 @@ var vm = require('vm');
 var path = require('path');
 var Module = require('module');
 
+var isAbsolutePath = require('path-is-absolute');
+
 /**
  * Eval expressions, JSON files or require commonJS modules
  *
@@ -22,7 +24,7 @@ module.exports = function(content, filename, context) {
         });
     }
 
-    if(filename && !path.isAbsolute(filename)) {
+    if(filename && !isAbsolutePath(filename)) {
         filename = path.resolve(path.dirname(_getCalleeFilename()), filename);
     }
 
@@ -54,15 +56,15 @@ function _commonjsEval(content, filename, context) {
         sandbox.module.filename = filename;
         sandbox.module.paths = Module._nodeModulePaths(dirname);
         // See: https://github.com/nodejs/node/blob/master/lib/internal/module.js#L13-L40
-        sandbox.require = id => sandbox.module.require(id);
-        sandbox.require.resolve = req => Module._resolveFilename(req, sandbox.module);
+        sandbox.require = function(id) { return sandbox.module.require(id); };
+        sandbox.require.resolve = function(req) { return Module._resolveFilename(req, sandbox.module); };
     } else {
         filename = '<anonymous>';
         sandbox.require = filenameRequired;
     }
 
     var args = [sandbox.module.exports, sandbox.require, sandbox.module, filename, dirname];
-    context && (contextKeys = Object.keys(context).map(key => {
+    context && (contextKeys = Object.keys(context).map(function(key) {
         args.push(context[key]);
         return key;
     }));
