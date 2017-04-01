@@ -1,5 +1,7 @@
 # node-eval
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/node-eval/node-eval.svg)](https://greenkeeper.io/)
+
 Eval JS-expression or require CommonJS modules and JSON files with ease.
 
 [![NPM version](http://img.shields.io/npm/v/node-eval.svg?style=flat)](http://www.npmjs.org/package/node-eval)
