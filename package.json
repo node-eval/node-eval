@@ -26,7 +26,7 @@
     "path-is-absolute": "1.0.1"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.1.0",
     "jscs": "^3.0.7",
     "jshint": "^2.9.1",
     "mocha": "^3.0.0",
