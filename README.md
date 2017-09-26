@@ -58,3 +58,7 @@ var content = 'module.exports = secretKey;';
 var res = safeEval(content, 'file.js', {secretKey: secretKey});
 console.log(res); // '^___^'
 ```
+
+## JSON5
+For parsing `json5` files use [file-eval](https://github.com/node-eval/file-eval#json5)
+
