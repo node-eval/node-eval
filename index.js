@@ -1,8 +1,10 @@
-var vm = require('vm');
-var path = require('path');
-var Module = require('module');
+'use strict';
 
-var isAbsolutePath = require('path-is-absolute');
+const vm = require('vm');
+const path = require('path');
+const Module = require('module');
+
+const isAbsolutePath = require('path-is-absolute');
 
 /**
  * Eval expressions, JSON files or require commonJS modules
@@ -12,14 +14,14 @@ var isAbsolutePath = require('path-is-absolute');
  * @param {Object} [context] objects to provide into execute method
  * @returns {*}
  */
-module.exports = function(content, filename, context) {
-    var ext = filename && path.extname(filename);
+module.exports = (content, filename, context) => {
+    const ext = filename && path.extname(filename);
 
     content = stripBOM(content);
 
     if(ext === '.json') {
-        return tryCatch(JSON.parse.bind(null, content), function(err) {
-            err.message = filename + ': ' + err.message;
+        return tryCatch(JSON.parse.bind(null, content), err => {
+            err.message = `${filename}: ${err.message}`;
             throw err;
         });
     }
@@ -28,13 +30,13 @@ module.exports = function(content, filename, context) {
         filename = path.resolve(path.dirname(_getCalleeFilename()), filename);
     }
 
-    var sandbox;
+    let sandbox;
     // Skip commonjs evaluation if there are no `exports` or `module` occurrencies
     if(/\b(exports|module)\b/.test(content)) {
         sandbox = _commonjsEval(content, filename, context);
     }
 
-    var result;
+    let result;
     if(sandbox && !sandbox.__result) {
         result = sandbox.module.exports;
     } else {
@@ -44,10 +46,10 @@ module.exports = function(content, filename, context) {
 };
 
 function _commonjsEval(content, filename, context) {
-    var dirname = filename && path.dirname(filename);
-    var sandbox = {};
-    var exports = {};
-    var contextKeys;
+    const dirname = filename && path.dirname(filename);
+    const sandbox = {};
+    const exports = {};
+    let contextKeys;
 
     sandbox.module = new Module(filename || '<anonymous>', module.parent);
     sandbox.module.exports = exports;
@@ -56,25 +58,25 @@ function _commonjsEval(content, filename, context) {
         sandbox.module.filename = filename;
         sandbox.module.paths = Module._nodeModulePaths(dirname);
         // See: https://github.com/nodejs/node/blob/master/lib/internal/module.js#L13-L40
-        sandbox.require = function(id) { return sandbox.module.require(id); };
-        sandbox.require.resolve = function(req) { return Module._resolveFilename(req, sandbox.module); };
+        sandbox.require = id => sandbox.module.require(id);
+        sandbox.require.resolve = req => Module._resolveFilename(req, sandbox.module);
     } else {
         filename = '<anonymous>';
         sandbox.require = filenameRequired;
     }
 
-    var args = [sandbox.module.exports, sandbox.require, sandbox.module, filename, dirname];
-    context && (contextKeys = Object.keys(context).map(function(key) {
+    const args = [sandbox.module.exports, sandbox.require, sandbox.module, filename, dirname];
+    context && (contextKeys = Object.keys(context).map(key => {
         args.push(context[key]);
         return key;
     }));
 
-    var wrapper = wrap(content, contextKeys);
-    var options = {filename: filename, lineOffset: 0, displayErrors: true};
-    var compiledWrapper = vm.runInThisContext(wrapper, options);
+    const wrapper = wrap(content, contextKeys);
+    const options = {filename: filename, lineOffset: 0, displayErrors: true};
+    const compiledWrapper = vm.runInThisContext(wrapper, options);
 
-    var moduleKeysCount = Object.keys(sandbox.module).length;
-    var exportKeysCount = Object.keys(sandbox.module.exports).length;
+    const moduleKeysCount = Object.keys(sandbox.module).length;
+    const exportKeysCount = Object.keys(sandbox.module.exports).length;
     compiledWrapper.apply(sandbox.module.exports, args);
 
     sandbox.__result = sandbox.module.exports === exports &&
@@ -92,13 +94,13 @@ function _commonjsEval(content, filename, context) {
  * @returns {String}
  */
 function wrap(body, extKeys) {
-    var wrapper = [
+    const wrapper = [
         '(function (exports, require, module, __filename, __dirname',
         ') { ',
         '\n});'
     ];
 
-    extKeys = extKeys ? ', ' + extKeys : '';
+    extKeys = extKeys ? `, ${extKeys}` : '';
 
     return wrapper[0] + extKeys + wrapper[1] + body + wrapper[2];
 }
@@ -135,7 +137,7 @@ function stripBOM(content) {
  */
 function _getCalleeFilename(calls) {
     calls = (calls|0) + 3; // 3 is a number of inner calls
-    var e = {};
+    const e = {};
     Error.captureStackTrace(e);
     return parseStackLine(e.stack.split(/\n/)[calls]).filename;
 }
@@ -147,7 +149,7 @@ function _getCalleeFilename(calls) {
  * @returns {{filename: String, line: ?Number, column: ?Number}}
  */
 function parseStackLine(line) {
-    var urlLike = line
+    const urlLike = line
         // Sanitize string
         .replace(/^\s+/, '').replace(/\(eval code/g, '(')
         // Split with spaces: 'at someFn (/path/to.js:1:2)' or 'at /path/to.js:1:2'
@@ -155,8 +157,8 @@ function parseStackLine(line) {
         // Take the last piece
         .pop();
     // Fetch parts: '(/path/to.js:1:2)' → [..., '/path/to.js', 1, 2]
-    var parts = /(.+?)(?:\:(\d+))?(?:\:(\d+))?$/.exec(urlLike.replace(/[\(\)]/g, ''));
-    var filename = ['eval', '<anonymous>'].indexOf(parts[1]) > -1 ? undefined : parts[1];
+    const parts = /(.+?)(?:\:(\d+))?(?:\:(\d+))?$/.exec(urlLike.replace(/[\(\)]/g, ''));
+    const filename = ['eval', '<anonymous>'].indexOf(parts[1]) > -1 ? undefined : parts[1];
 
     return {filename: filename, line: parts[2], column: parts[3]};
 }
