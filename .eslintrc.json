@@ -1,0 +1,19 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2016
+  },
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "extends": "pedant",
+  "overrides": {
+    "files": "test/**/*.js",
+    "env": {
+      "mocha": true
+    },
+    "globals": {
+      "chai": false
+    }
+  }
+}

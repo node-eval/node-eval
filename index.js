@@ -108,6 +108,10 @@ function wrap(body, extKeys) {
 /**
  * Execute function inside try-catch
  * function with try-catch is not optimized so we made this helper
+ *
+ * @param {Function} fn
+ * @param {Function} cb
+ * @returns {*}
  */
 function tryCatch(fn, cb) {
     try {
@@ -157,7 +161,7 @@ function parseStackLine(line) {
         // Take the last piece
         .pop();
     // Fetch parts: '(/path/to.js:1:2)' → [..., '/path/to.js', 1, 2]
-    const parts = /(.+?)(?:\:(\d+))?(?:\:(\d+))?$/.exec(urlLike.replace(/[\(\)]/g, ''));
+    const parts = /(.+?)(?::(\d+))?(?::(\d+))?$/.exec(urlLike.replace(/[()]/g, ''));
     const filename = ['eval', '<anonymous>'].indexOf(parts[1]) > -1 ? undefined : parts[1];
 
     return {filename: filename, line: parts[2], column: parts[3]};
