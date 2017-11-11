@@ -12,11 +12,6 @@
     "type": "git",
     "url": "https://github.com/nodules/node-eval"
   },
-  "greenkeeper": {
-    "ignore": [
-      "nyc"
-    ]
-  },
   "main": "index.js",
   "engines": {
     "node": ">= 4"
@@ -31,10 +26,10 @@
     "path-is-absolute": "1.0.1"
   },
   "devDependencies": {
-    "chai": "^4.1.0",
+    "chai": "^4.1.2",
     "jscs": "^3.0.7",
-    "jshint": "^2.9.1",
-    "mocha": "3.5.3",
-    "nyc": "10.3.2"
+    "jshint": "^2.9.5",
+    "mocha": "^4.0.1",
+    "nyc": "^11.3.0"
   }
 }
