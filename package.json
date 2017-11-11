@@ -13,6 +13,9 @@
     "url": "https://github.com/nodules/node-eval"
   },
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "engines": {
     "node": ">= 4"
   },
