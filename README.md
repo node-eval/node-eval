@@ -1,6 +1,6 @@
 # node-eval
 
-Eval JS-expression or require CommonJS modules and JSON files with ease.
+Eval JS-expression, CommonJS modules and JSON with ease.
 
 [![NPM Status][npm-img]][npm]
 [![Travis Status][test-img]][travis]
@@ -19,57 +19,127 @@ Eval JS-expression or require CommonJS modules and JSON files with ease.
 [david]:         https://david-dm.org/node-eval/node-evalenb/enb
 [david-img]:     https://img.shields.io/david/node-eval/node-eval/master.svg
 
-## Usage example:
+## Usage
 
-### Simple
+### JS-expression
 
 ```js
-var nodeEval = require('node-eval');
+const nodeEval = require('node-eval');
 
-console.log(nodeEval('42 * 42')); // 1764
+nodeEval('42 * 42'); // 1764
 ```
 
 ### CommonJS
-```js
-var safeEval = require('node-eval');
 
-var requireContent =
+```js
+const nodeEval = require('node-eval');
+const moduleContents =
 `
-    var p = require('../package.json');
+    const package = require('./package.json');
+
     module.exports = {
-        name: p.name
+        name: package.name
     };
 `;
 
-var package = safeEval(requireContent);
-console.log(package.name); // 'node-eval'
+nodeEval(moduleContents, './index.js'); // filename need to provide required info to resolve relative paths inside evaluating code
+
+// ➜ { name: 'node-eval' }
 ```
 
---
-**NB** Internally `node-eval` will resolve passed relative paths using the place
-it's called (like `require` do).
+### JSON
+
+```js
+const nodeEval = require('node-eval');
+const jsonContents = '{ "name": "node-eval" }';
+
+nodeEval(requireContents, 'my.json'); // filename need to `node-eval` determinate json format by extention
+
+// ➜ { name: 'node-eval' }
+```
+
+## API
+
+### nodeEval(contents[, filename, context])
+
+#### contents
+
+Type: `string`
+
+The JS-expression, CommonJS module contents or JSON contents.
+
+#### filename
+
+Type: `string`
+
+The path to file which contents we execute.
+
+The `node-eval` determinate format by extension. If filename ends with `.json` extention, its contents will be parsing with `JSON.parse`. If filename ends with `.js`, its contents will be evaluating with [vm](https://nodejs.org/dist/latest/docs/api/vm.html).
+
+By default expected JS-expression or CommonJS module contents.
+
+```js
+const nodeEval = require('node-eval');
+
+nodeEval('42 * 42'/* js by default */); // 1764
+nodeEval('42 * 42', 'my.js'); // 1764
+nodeEval('{ "name": "node-eval" }', 'my.json'); // '{ name: 'node-eval' }'
+```
+
+To evaluating CommonJS module contents filename is required to resolve relative paths inside evaluating code.
+
+```js
+const nodeEval = require('node-eval');
+const moduleContents =
+`
+    const package = require('./package.json'); // to resolve this require need to know the path of current module (./index.js)
+
+    module.exports = {
+        name: package.name
+    };
+`;
+
+nodeEval(moduleContents, './index.js'); // filename need to provide required info to resolve relative paths inside evaluating code
+```
+
+Internally `node-eval` will resolve passed relative paths using the place it's called (like `require` do).
+
 It may spend additional processor's time on it, so better to pass in absolute path.
 
 ```js
-// /repos/open-source-project/lib/file.js:
-const evaluatingFile = '../files/another.js';
-nodeEval(fs.readFileSync(evaluatingFile, 'utf-8'), evaluatingFile);
-// '../files/another.js' will be resolved to '/repos/open-source-project/files/another.js'
+const fs = require('fs');
+const nodeEval = require('node-eval');
+
+// For example, current path is "/repos/project/lib/file.js".
+const modulePath = '../files/another.js';
+const moduleContents = fs.readFileSync(evaluatingFile, 'utf-8');
+
+// '../files/another.js' will be resolved to '/repos/project/files/another.js'
+nodeEval(moduleContents, evaluatingFile);
 ```
 
-## Context
-You can provide some like-a-global variables into node-eval
+#### context
+
+Type: `Object`
+
+The object to provide into execute method.
+
+If `context` is specified, then module contents will be evaluating with `vm.runInNewContext`.
+
+If `context` is not specified, then module contents will be evaluating with `vm.runInThisContext`.
+
+With `context` you can provide some like-a-global variables into `node-eval`.
 
 ```js
-var safeEval = require('node-eval');
+const nodeEval = require('node-eval');
 
-var secretKey = '^___^';
-var content = 'module.exports = secretKey;';
+const secretKey = '^___^';
+const contents = 'module.exports = secretKey;';
 
-var res = safeEval(content, 'file.js', {secretKey: secretKey});
-console.log(res); // '^___^'
+nodeEval(content, { secretKey }); // '^___^'
 ```
 
-## JSON5
-For parsing `json5` files use [file-eval](https://github.com/node-eval/file-eval#json5)
+## Related
+
+* [file-eval](https://github.com/node-eval/file-eval)
 
