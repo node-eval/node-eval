@@ -19,6 +19,12 @@ Eval JS-expression, CommonJS modules and JSON with ease.
 [david]:         https://david-dm.org/node-eval/node-eval
 [david-img]:     https://img.shields.io/david/node-eval/node-eval/master.svg
 
+## Install
+
+```
+$ npm install --save node-eval
+```
+
 ## Usage
 
 ### JS-expression
