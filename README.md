@@ -16,7 +16,7 @@ Eval JS-expression, CommonJS modules and JSON with ease.
 [coveralls]:     https://coveralls.io/r/node-eval/node-eval
 [coveralls-img]: https://img.shields.io/coveralls/node-eval/node-eval/master.svg
 
-[david]:         https://david-dm.org/node-eval/node-evalenb/enb
+[david]:         https://david-dm.org/node-eval/node-eval
 [david-img]:     https://img.shields.io/david/node-eval/node-eval/master.svg
 
 ## Usage
@@ -53,7 +53,7 @@ nodeEval(moduleContents, './index.js'); // filename need to provide required inf
 const nodeEval = require('node-eval');
 const jsonContents = '{ "name": "node-eval" }';
 
-nodeEval(requireContents, 'my.json'); // filename need to `node-eval` determinate json format by extention
+nodeEval(jsonContents, 'my.json'); // filename need to `node-eval` determinate json format by extention
 
 // ➜ { name: 'node-eval' }
 ```
