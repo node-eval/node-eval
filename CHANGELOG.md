@@ -9,5 +9,3 @@ v2.0.0 (2017-11-12)
 
 [#33]: https://github.com/node-eval/file-eval/pull/33
 [#35]: https://github.com/node-eval/file-eval/pull/35
-
-

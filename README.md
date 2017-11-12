@@ -112,10 +112,10 @@ const nodeEval = require('node-eval');
 
 // For example, current path is "/repos/project/lib/file.js".
 const modulePath = '../files/another.js';
-const moduleContents = fs.readFileSync(evaluatingFile, 'utf-8');
+const moduleContents = fs.readFileSync(modulePath, 'utf-8');
 
 // '../files/another.js' will be resolved to '/repos/project/files/another.js'
-nodeEval(moduleContents, evaluatingFile);
+nodeEval(moduleContents, modulePath);
 ```
 
 #### context
