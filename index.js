@@ -42,26 +42,30 @@ module.exports = (content, filename, context) => {
     } else {
         result = context ? vm.runInNewContext(content, context) : vm.runInThisContext(content);
     }
+    sandbox.release();
+
     return result;
 };
 
-function _commonjsEval(content, filename, context) {
-    const dirname = filename && path.dirname(filename);
-    const sandbox = {};
+function _commonjsEval(content, incomingFilename, context) {
+    const hasFilename = Boolean(incomingFilename);
+    const dirname = hasFilename && path.dirname(incomingFilename);
+    const filename = hasFilename ? incomingFilename : '<anonymous>';
+
+    const sandbox = {module: null, require: null, __result: null};
     const exports = {};
     let contextKeys;
 
-    sandbox.module = new Module(filename || '<anonymous>', module.parent);
+    sandbox.module = new Module(filename, module.parent);
     sandbox.module.exports = exports;
+    sandbox.module.filename = filename;
 
-    if(filename) {
-        sandbox.module.filename = filename;
+    if(hasFilename) {
         sandbox.module.paths = Module._nodeModulePaths(dirname);
         // See: https://github.com/nodejs/node/blob/master/lib/internal/module.js#L13-L40
         sandbox.require = id => sandbox.module.require(id);
         sandbox.require.resolve = req => Module._resolveFilename(req, sandbox.module);
     } else {
-        filename = '<anonymous>';
         sandbox.require = filenameRequired;
     }
 
@@ -82,6 +86,10 @@ function _commonjsEval(content, filename, context) {
     sandbox.__result = sandbox.module.exports === exports &&
         Object.keys(sandbox.module.exports).length === exportKeysCount &&
         Object.keys(sandbox.module).length === moduleKeysCount;
+
+    // Prevent storing all evaluated stuff in parent's chidlren
+    const parentChildren = module.parent.children;
+    sandbox.release = () => { parentChildren.splice(parentChildren.indexOf(sandbox.module), 1); };
 
     return sandbox;
 }
